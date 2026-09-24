@@ -30,6 +30,7 @@ import {
   Check
 } from 'lucide-react';
 import { StudyGroup, DriveWorkspaceFile } from '../types/campus';
+import { createGoogleMeetSpace } from '../utils/googleMeetService';
 
 interface GoogleWorkspaceHubModalProps {
   isOpen: boolean;
@@ -61,6 +62,20 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
   const [isMicOn, setIsMicOn] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [meetChatInput, setMeetChatInput] = useState('');
+  const [createdMeetUrl, setCreatedMeetUrl] = useState<string | null>(null);
+  const [isGeneratingMeet, setIsGeneratingMeet] = useState(false);
+
+  const handleGenerateMeetSpace = async () => {
+    setIsGeneratingMeet(true);
+    try {
+      const space = await createGoogleMeetSpace();
+      setCreatedMeetUrl(space.meetingUri);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingMeet(false);
+    }
+  };
 
   // Google Classroom State
   const [classroomTab, setClassroomTab] = useState<'stream' | 'classwork' | 'people'>('stream');
@@ -546,14 +561,24 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        onClick={handleGenerateMeetSpace}
+                        disabled={isGeneratingMeet}
+                        className="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition disabled:opacity-50"
+                        title="Create a instant Google Meet Space via Google Workspace API"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                        <span>{isGeneratingMeet ? 'Creating Space...' : 'New Google Meet Space'}</span>
+                      </button>
+
                       <a
-                        href={studyGroup.googleMeetUrl || 'https://meet.google.com'}
+                        href={createdMeetUrl || studyGroup.googleMeetUrl || 'https://meet.google.com/new'}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition"
                       >
-                        <span>Open Official Google Meet Tab</span>
+                        <span>Join Meeting</span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     </div>
