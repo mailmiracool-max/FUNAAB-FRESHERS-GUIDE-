@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="50%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="#fbbf24" stroke-width="6" opacity="0.4" />
+
+  <!-- Outer Ring Radar -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#10b981" stroke-width="6" stroke-dasharray="14 10" opacity="0.5" />
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#fbbf24" stroke-width="4" opacity="0.3" />
+
+  <!-- Shield Shape (Agriculture & Institution) -->
+  <path d="M 256 80 C 320 80, 392 110, 392 180 C 392 270, 310 370, 256 420 C 202 370, 120 270, 120 180 C 120 110, 192 80, 256 80 Z" fill="url(#shieldGrad)" stroke="url(#goldGrad)" stroke-width="8" />
+
+  <!-- Laurel / Crop Leaves inside Shield -->
+  <path d="M 200 240 Q 220 280, 256 310 Q 292 280, 312 240" fill="none" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" />
+  <path d="M 180 200 Q 210 230, 256 250 Q 302 230, 332 200" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" opacity="0.8" />
+
+  <!-- Compass Needle (Navigation) -->
+  <polygon points="256,110 285,256 256,220 227,256" fill="url(#goldGrad)" />
+  <polygon points="256,401 227,256 256,292 285,256" fill="#ffffff" opacity="0.9" />
+
+  <!-- Center Pin / Pivot -->
+  <circle cx="256" cy="256" r="24" fill="#fbbf24" stroke="#064e3b" stroke-width="6" />
+  <circle cx="256" cy="256" r="8" fill="#064e3b" />
+</svg>
