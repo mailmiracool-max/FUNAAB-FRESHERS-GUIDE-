@@ -3,6 +3,7 @@
   "appId": "1:840951725266:web:a0cadf2398cdee6783010b",
   "apiKey": "AIzaSyBD0l_v5JTq4tGcxuj_S-k2CQcgZEGOWMw",
   "authDomain": "elite-decoder-fvxch.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-5ee6e20d-b8e0-4d3b-91cc-eed4a185cc75",
   "storageBucket": "elite-decoder-fvxch.firebasestorage.app",
   "messagingSenderId": "840951725266",
   "measurementId": "",

@@ -22,10 +22,9 @@ async function generateContentWithRetry(params: {
   primaryModel?: string;
 }) {
   const candidateModels = [
-    params.primaryModel || 'gemini-2.5-flash',
-    'gemini-flash-latest',
-    'gemini-2.5-pro',
-    'gemini-3.8-flash'
+    params.primaryModel || 'gemini-3.6-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash'
   ];
   const models = Array.from(new Set(candidateModels));
   let lastError: any = null;
