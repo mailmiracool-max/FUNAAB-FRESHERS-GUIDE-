@@ -55,13 +55,14 @@ import { usePreciseGeolocation, FUNAAB_DEFAULT_GATE, FUNAAB_NEEDS_HOSTEL } from 
 import { LocationCalibratorModal } from './components/LocationCalibratorModal';
 import { AppInstallModal } from './components/AppInstallModal';
 import { CGPACalculatorModal } from './components/CGPACalculatorModal';
+import { StudyRoomsSpace } from './components/StudyRoomsSpace';
 import { CloudOff } from 'lucide-react';
 
 export default function App() {
   const isOnline = useOnlineStatus();
   const { theme, toggleTheme } = useTheme();
   const [quotaExceeded, setQuotaExceeded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'map' | 'routes' | 'directory' | 'diagram' | 'tour'>('map');
+  const [activeTab, setActiveTab] = useState<'map' | 'cgpa_advisor' | 'study_rooms' | 'routes' | 'directory' | 'diagram' | 'tour'>('map');
   const [mapType, setMapType] = useState<string>('roadmap');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -336,33 +337,6 @@ export default function App() {
                   showStudyGroupsOnMap={showStudyGroupsOnMap}
                 />
 
-              {/* Quick Freshers Welcome floating prompt */}
-              <div className="absolute top-20 left-4 sm:left-6 z-20 bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-amber-400/50 max-w-xs animate-in slide-in-from-top-2 duration-300">
-                <div className="flex items-center gap-2.5 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-black">
-                    🌿
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-amber-300">FUNAAB Freshers Guide</h4>
-                    <p className="text-[11px] text-slate-300">AI Advisor, CGPA Calc & Google Hub</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setIsFreshersGuideOpen(true)}
-                    className="flex-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black rounded-xl transition text-center shadow"
-                  >
-                    Open Freshers Guide
-                  </button>
-                  <button
-                    onClick={() => setIsCGPACalculatorOpen(true)}
-                    className="py-1.5 px-2.5 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition"
-                  >
-                    CGPA Calc
-                  </button>
-                </div>
-              </div>
-
               {/* Floating Quick Search & Events Action Bar at top center */}
               <div className="absolute top-4 left-4 right-4 sm:left-6 sm:right-auto z-20 flex items-center gap-2 max-w-xl">
                 <button
@@ -528,6 +502,31 @@ export default function App() {
                   }
                 }}
                 onFocusStep={() => setActiveTab('map')}
+              />
+            </div>
+          )}
+
+          {/* Dedicated Tab View 2: CGPA & Academic Strategy Workspace */}
+          {activeTab === 'cgpa_advisor' && (
+            <div className="w-full h-full overflow-y-auto animate-tab-content">
+              <CGPACalculatorModal
+                isOpen={true}
+                isEmbedded={true}
+                onClose={() => setActiveTab('map')}
+              />
+            </div>
+          )}
+
+          {/* Dedicated Tab View 3: Study Rooms & Google Workspace Hub */}
+          {activeTab === 'study_rooms' && (
+            <div className="w-full h-full overflow-y-auto animate-tab-content">
+              <StudyRoomsSpace
+                studyGroups={studyGroups}
+                onOpenWorkspaceHub={(group) => {
+                  if (group) setActiveWorkspaceGroupId(group.id);
+                  setIsWorkspaceOpen(true);
+                }}
+                onOpenCreateGroupModal={() => setIsEventsOverlayOpen(true)}
               />
             </div>
           )}

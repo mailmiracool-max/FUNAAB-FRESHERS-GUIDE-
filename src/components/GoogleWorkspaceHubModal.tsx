@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { StudyGroup, DriveWorkspaceFile } from '../types/campus';
 import { createGoogleMeetSpace } from '../utils/googleMeetService';
+import { createGoogleChatSpace, sendGoogleChatMessage, getGoogleChatUrl } from '../utils/googleChatService';
 
 interface GoogleWorkspaceHubModalProps {
   isOpen: boolean;
@@ -55,7 +56,7 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
 }) => {
   if (!isOpen || !studyGroup) return null;
 
-  const [activeTab, setActiveTab] = useState<'classroom' | 'meet' | 'forms' | 'drive' | 'calendar' | 'maps'>('classroom');
+  const [activeTab, setActiveTab] = useState<'classroom' | 'meet' | 'chat' | 'forms' | 'drive' | 'calendar' | 'maps'>('classroom');
 
   // Google Meet Interactive Camera/Mic state
   const [isWebcamOn, setIsWebcamOn] = useState(false);
@@ -64,6 +65,41 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
   const [meetChatInput, setMeetChatInput] = useState('');
   const [createdMeetUrl, setCreatedMeetUrl] = useState<string | null>(null);
   const [isGeneratingMeet, setIsGeneratingMeet] = useState(false);
+
+  // Google Chat State
+  const [chatSpaceName, setChatSpaceName] = useState<string | null>(null);
+  const [chatMessageInput, setChatMessageInput] = useState('');
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: string; text: string; timestamp: string }>>([
+    { sender: 'FUNAAB Bot', text: `Welcome to the official Google Chat space for ${studyGroup.courseCode}!`, timestamp: '09:00 AM' }
+  ]);
+  const [isCreatingChatSpace, setIsCreatingChatSpace] = useState(false);
+
+  const handleCreateChatSpace = async () => {
+    setIsCreatingChatSpace(true);
+    try {
+      const space = await createGoogleChatSpace(`${studyGroup.courseCode} Study Space`);
+      setChatSpaceName(space.name);
+      setChatMessages(prev => [
+        ...prev,
+        { sender: 'System', text: `Created Google Chat Space: ${space.displayName} (${space.name})`, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+      ]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsCreatingChatSpace(false);
+    }
+  };
+
+  const handleSendChatMsg = async () => {
+    if (!chatMessageInput.trim()) return;
+    const text = chatMessageInput.trim();
+    setChatMessageInput('');
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setChatMessages(prev => [...prev, { sender: studentName, text, timestamp: timeStr }]);
+    if (chatSpaceName) {
+      await sendGoogleChatMessage(chatSpaceName, text);
+    }
+  };
 
   const handleGenerateMeetSpace = async () => {
     setIsGeneratingMeet(true);
@@ -190,6 +226,18 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
           >
             <Video className="w-4 h-4 text-blue-600" />
             <span>Google Meet</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`px-3.5 py-2.5 font-bold text-xs sm:text-sm flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'chat'
+                ? 'border-teal-600 text-teal-700 dark:text-teal-400 bg-white dark:bg-slate-900 rounded-t-xl'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4 text-teal-600" />
+            <span>Google Chat</span>
           </button>
 
           <button
@@ -628,6 +676,98 @@ export const GoogleWorkspaceHubModal: React.FC<GoogleWorkspaceHubModalProps> = (
                     </button>
                   </form>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: GOOGLE CHAT SPACE */}
+          {activeTab === 'chat' && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-teal-900 via-slate-900 to-teal-950 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-teal-400" />
+                    <h3 className="font-bold text-sm text-white">
+                      Google Chat Space: {studyGroup.courseCode} ({studyGroup.courseTitle})
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-300 mt-1">
+                    Connect with fellow FUNAAB students via official Google Chat API spaces.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCreateChatSpace}
+                    disabled={isCreatingChatSpace}
+                    className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition disabled:opacity-50"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <span>{isCreatingChatSpace ? 'Creating...' : 'Create Official Space'}</span>
+                  </button>
+
+                  <a
+                    href={getGoogleChatUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-1.5 shadow transition border border-slate-700"
+                  >
+                    <span>Open Google Chat</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Chat Messages Container */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 flex flex-col h-[440px] shadow-sm">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    {chatSpaceName ? `Connected to ${chatSpaceName}` : 'Local Space Channel'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    {studyGroup.membersCount} Members Active
+                  </span>
+                </div>
+
+                <div className="flex-1 overflow-y-auto py-3 space-y-3">
+                  {chatMessages.map((msg, idx) => (
+                    <div key={idx} className={`p-3 rounded-2xl max-w-lg text-xs ${
+                      msg.sender === studentName 
+                        ? 'bg-teal-600 text-white ml-auto' 
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                    }`}>
+                      <div className="flex items-center justify-between text-[10px] opacity-75 mb-1 font-semibold">
+                        <span>{msg.sender}</span>
+                        <span>{msg.timestamp}</span>
+                      </div>
+                      <p className="whitespace-pre-line leading-relaxed">{msg.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendChatMsg();
+                  }}
+                  className="flex items-center gap-2 pt-3 border-t border-slate-200 dark:border-slate-800"
+                >
+                  <input
+                    type="text"
+                    value={chatMessageInput}
+                    onChange={(e) => setChatMessageInput(e.target.value)}
+                    placeholder={`Broadcast message to Google Chat space as ${studentName}...`}
+                    className="flex-1 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send</span>
+                  </button>
+                </form>
               </div>
             </div>
           )}

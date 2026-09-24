@@ -15,7 +15,8 @@ import {
   Home, 
   GraduationCap,
   Layers,
-  Award
+  Award,
+  Camera
 } from 'lucide-react';
 import { 
   FUNAAB_SLANG_DICTIONARY, 
@@ -24,6 +25,7 @@ import {
   FreshersChecklistItem 
 } from '../data/freshersGuide';
 import { CampusLocation } from '../types/campus';
+import { NoticeGallerySection } from './NoticeGallerySection';
 
 interface FreshersGuideModalProps {
   isOpen: boolean;
@@ -44,7 +46,7 @@ export const FreshersGuideModal: React.FC<FreshersGuideModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const [activeTab, setActiveTab] = useState<'assistant' | 'map_guide' | 'checklist' | 'slang' | 'transport'>('assistant');
+  const [activeTab, setActiveTab] = useState<'assistant' | 'map_guide' | 'checklist' | 'slang' | 'transport' | 'gallery'>('assistant');
 
   // Gemini Freshers Assistant Query State
   const [query, setQuery] = useState('');
@@ -212,10 +214,25 @@ export const FreshersGuideModal: React.FC<FreshersGuideModalProps> = ({
             <Bus className="w-4 h-4 text-teal-600" />
             <span>Transport & Fares</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('gallery')}
+            className={`px-4 py-3 font-bold text-xs flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+              activeTab === 'gallery'
+                ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 bg-white dark:bg-slate-900 rounded-t-xl shadow-sm'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900'
+            }`}
+          >
+            <Camera className="w-4 h-4 text-amber-500" />
+            <span>My Notice Gallery</span>
+          </button>
         </div>
 
         {/* Tab Content */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950">
+          
+          {/* TAB 0: MY CAMPUS NOTICE BOARD GALLERY */}
+          {activeTab === 'gallery' && <NoticeGallerySection />}
           
           {/* TAB 1: GEMINI FRESHERS AI ADVISOR */}
           {activeTab === 'assistant' && (

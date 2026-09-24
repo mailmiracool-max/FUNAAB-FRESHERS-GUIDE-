@@ -26,6 +26,7 @@ export interface CourseGradeItem {
 interface CGPACalculatorModalProps {
   isOpen: boolean;
   onClose: () => void;
+  isEmbedded?: boolean;
 }
 
 const GRADE_POINTS_5_SCALE: Record<'A' | 'B' | 'C' | 'D' | 'E' | 'F', number> = {
@@ -58,6 +59,7 @@ const DEFAULT_100L_COURSES: CourseGradeItem[] = [
 export const CGPACalculatorModal: React.FC<CGPACalculatorModalProps> = ({
   isOpen,
   onClose,
+  isEmbedded = false,
 }) => {
   const [scale, setScale] = useState<'5.0' | '4.0'>('5.0');
   const [targetGoal, setTargetGoal] = useState<string>('4.50+ First Class');
@@ -163,14 +165,15 @@ export const CGPACalculatorModal: React.FC<CGPACalculatorModalProps> = ({
 
   const classification = getDegreeClassification(cgpa);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-modal-backdrop">
-      <div 
-        className="bg-white dark:bg-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh] animate-modal-content"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cgpa-calculator-title"
-      >
+  if (!isOpen && !isEmbedded) return null;
+
+  const card = (
+    <div 
+      className={`bg-white dark:bg-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl w-full ${isEmbedded ? 'max-w-4xl mx-auto' : 'max-w-2xl max-h-[92vh]'} overflow-hidden flex flex-col animate-modal-content`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cgpa-calculator-title"
+    >
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -465,6 +468,15 @@ export const CGPACalculatorModal: React.FC<CGPACalculatorModalProps> = ({
           </button>
         </div>
       </div>
+  );
+
+  if (isEmbedded) {
+    return <div className="w-full h-full p-4 sm:p-6 overflow-y-auto max-w-5xl mx-auto animate-tab-content">{card}</div>;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-modal-backdrop">
+      {card}
     </div>
   );
 };

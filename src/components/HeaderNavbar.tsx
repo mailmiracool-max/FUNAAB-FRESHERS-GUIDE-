@@ -17,15 +17,16 @@ import {
   Calendar,
   Download,
   Calculator,
-  BookOpen
+  BookOpen,
+  Users
 } from 'lucide-react';
 import { UserLocationState } from '../types/campus';
 import { PWAInstallButton } from './PWAInstallButton';
 import { Theme } from '../hooks/useTheme';
 
 interface HeaderNavbarProps {
-  activeTab: 'map' | 'routes' | 'directory' | 'diagram' | 'tour';
-  setActiveTab: (tab: 'map' | 'routes' | 'directory' | 'diagram' | 'tour') => void;
+  activeTab: 'map' | 'cgpa_advisor' | 'study_rooms' | 'routes' | 'directory' | 'diagram' | 'tour';
+  setActiveTab: (tab: 'map' | 'cgpa_advisor' | 'study_rooms' | 'routes' | 'directory' | 'diagram' | 'tour') => void;
   userLocation: UserLocationState;
   onToggleSimulateLocation: () => void;
   onLocateUser: () => void;
@@ -106,6 +107,32 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
             >
               <MapIcon className="w-4 h-4" />
               Live Map
+            </button>
+
+            {/* CGPA Advisor Space Tab */}
+            <button
+              onClick={() => setActiveTab('cgpa_advisor')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'cgpa_advisor'
+                  ? 'bg-emerald-600 text-white shadow-sm font-bold'
+                  : 'text-emerald-200 hover:text-white hover:bg-emerald-800/50'
+              }`}
+            >
+              <Calculator className="w-4 h-4 text-amber-300" />
+              <span>CGPA Advisor</span>
+            </button>
+
+            {/* Study Rooms Space Tab */}
+            <button
+              onClick={() => setActiveTab('study_rooms')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'study_rooms'
+                  ? 'bg-emerald-600 text-white shadow-sm font-bold'
+                  : 'text-emerald-200 hover:text-white hover:bg-emerald-800/50'
+              }`}
+            >
+              <Users className="w-4 h-4 text-teal-300" />
+              <span>Study Rooms</span>
             </button>
 
             {/* Freshers Guide Button */}
@@ -367,6 +394,26 @@ export const HeaderNavbar: React.FC<HeaderNavbarProps> = ({
         >
           <MapIcon className="w-4 h-4" />
           Map
+        </button>
+
+        <button
+          onClick={() => setActiveTab('cgpa_advisor')}
+          className={`flex flex-col items-center gap-0.5 py-1 px-2 rounded text-[11px] font-medium ${
+            activeTab === 'cgpa_advisor' ? 'text-amber-400 font-bold' : 'text-emerald-300'
+          }`}
+        >
+          <Calculator className="w-4 h-4 text-amber-300" />
+          CGPA
+        </button>
+
+        <button
+          onClick={() => setActiveTab('study_rooms')}
+          className={`flex flex-col items-center gap-0.5 py-1 px-2 rounded text-[11px] font-medium ${
+            activeTab === 'study_rooms' ? 'text-amber-400 font-bold' : 'text-emerald-300'
+          }`}
+        >
+          <Users className="w-4 h-4 text-teal-300" />
+          Rooms
         </button>
 
         {onOpenFreshersGuide && (

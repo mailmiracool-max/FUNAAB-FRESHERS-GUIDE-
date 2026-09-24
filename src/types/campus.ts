@@ -139,6 +139,9 @@ export interface StudyGroup {
   members: string[];
   topic: string;
   badgeColor?: string;
+  department?: string;
+  description?: string;
+  meetingTime?: string;
   googleMeetUrl?: string;
   googleClassroomCode?: string;
   messages?: StudyGroupMessage[];
